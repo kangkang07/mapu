@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://webapi.amap.com/maps?v=1.4.1&key=776b6523308e1f587b85d5d00964f893"></script>
+    <script src="dist/index.js">
+    </script>
+</head>
+<style>
+    body{
+        margin: 0;
+    }
+    #map{
+        height: 100vh;
+        width:100vw;
+    }
+</style>
+<body>
+    <div id="map"></div>
+</body>
+</html>
+<script>
+    let mapView = new MapView()
+    console.log(mapView)
+    mapView.initMap(document.getElementById('map'),{
+        mapStyle: 'amap://styles/whitesmoke',
+    })
+
+</script>

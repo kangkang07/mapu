@@ -10,6 +10,9 @@
     "t": "tsc src/main.ts && node src/main.js"
   },
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.10.4",
+    "@babel/polyfill": "^7.10.4",
+    "@babel/runtime": "^7.10.5",
     "@types/jest": "^24.0.18",
     "h3-js": "^3.6.1",
     "nanoid": "^2.1.7"
