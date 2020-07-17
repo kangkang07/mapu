@@ -1,4 +1,4 @@
-import { Layer, IRenderContext } from "./Layer";
+import { Layer, IRenderContext,IDataParams } from "./Layer";
 import { RenderContext, LngLat, IShapeStyle } from "../Models";
 import { CanvasCircle } from '../Shapes/CanvasCircle';
 import { MapView } from '../MapView';
@@ -10,7 +10,7 @@ export default class CircleLayer extends Layer {
         super(mapView)
         this.shapeType = 'circle'
     }
-    CustomRender( { ctx, retina, event }:IRenderContext,eventProcess: (shape:CanvasShape)=>any) {
+    CustomRender( { ctx, retina, event }:IRenderContext) {
         this.shapesMap.forEach((shape) => {
             let style = shape.style
 
@@ -56,18 +56,14 @@ export default class CircleLayer extends Layer {
 
 
             ctx.closePath()
-            if (event) {
-                eventProcess(shape)
-            }
             ctx.stroke()
             ctx.fill()
         })
     }
-    protected parseData(data: { config: {center:LngLat,radius:number}, style: IShapeStyle, extra:any }): CanvasCircle {
+    protected parseData(data: IDataParams): CanvasCircle {
     
-        let { config, style } = data
-        const {center,radius} = config
-        let shape = new CanvasCircle(center, radius, style)
+        let { loc, radius, style } = data
+        let shape = new CanvasCircle(loc, radius, style)
         shape.setLayer(this)
         return shape
     }

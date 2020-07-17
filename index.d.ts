@@ -143,6 +143,12 @@ export declare class PolygonLayer extends Layer {
     shapeMap: Map<string, CanvasPolygon>
     constructor(mapView:MapView)
 }
+export declare class H3Layer extends PolygonLayer {
+    shapes: CanvasPolygon[]
+    shapeMap: Map<string, CanvasPolygon>
+    indexes:any[] 
+    constructor(mapView:MapView)
+}
 
 declare type CalcType = 'log10'|'log2'|'ln'|'logx'|'linear'
 declare type ColorUtils = {

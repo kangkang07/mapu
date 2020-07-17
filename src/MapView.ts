@@ -54,30 +54,6 @@ export class MapView{
 
     extraData:any = {}
     
-    // on(eventName: EventType, level: string, obj: Layer | CanvasShape |MapView,handler:(ev:MapEvent)=>any) {
-    //     if (!this.eventListenerList.find(el => el.type === eventName && el.nanoid === obj.nanoid)) {
-    //         let listener = {
-    //             type: eventName,
-    //             level,
-    //             source: obj,
-    //             nanoid: obj.nanoid,
-    //             handler
-    //         }
-    //         this.eventListenerList.push(listener)
-    //         if (level === 'map') {
-    //             this.mapEventListeners[eventName] = listener
-    //         }
-    //     }
-    // }
-    // off(eventName: EventType, level: string, obj: Layer | CanvasShape) {
-    //     let index = this.eventListenerList.findIndex(el => el.type === eventName && el.nanoid === obj.nanoid)
-    //     if (index > -1) {
-    //         this.eventListenerList.splice(index, 1)
-    //     }
-    //     if (level === 'map') {
-    //         delete this.mapEventListeners[eventName]
-    //     }
-    // }
 
     on(eventName: EventType ,handler:(ev:MapEvent)=>any) {
         this.mapEventListeners.set(eventName,  {
@@ -93,7 +69,7 @@ export class MapView{
     // constructor(el:any,config:any, plugins:string[] = ['AMap.MouseTool']) {
     //     this.initMap(el, config, plugins)
     // }
-    async initMap(el: any, config:any, plugins: string[] = ['AMap.MouseTool']) {
+    async init(el: any, config:any, plugins: string[] = ['AMap.MouseTool']) {
         this.map = new AMap.Map(el, config) 
         
         return new Promise((resolve, reject) => {
@@ -115,19 +91,17 @@ export class MapView{
                     zIndex:100
                 })
 
-                
-
                 layer.render = (rctx?: IRenderContext) => {
                     let size = this.map.getSize();//resize
-                
+        
                     let width = size.getWidth();
                     let height = size.getHeight();
                     let retina = AMap.Browser.retina;
                     // console.log('is retina:', retina)
-                    if(retina){//高清适配
-                        width*=2;
-                        height*=2;
-                    }
+                    // if(retina){//高清适配
+                    //     width*=2;
+                    //     height*=2;
+                    // }
                     canvas.width = width;
                     canvas.height = height;//清除画布
                     canvas.style.width = width+'px'
@@ -138,12 +112,20 @@ export class MapView{
                     }
                     rctx.ctx = canvas.getContext('2d')
                     rctx.retina = retina
+                    let bounds = this.map.getBounds()
+                    let latRange = [], lngRange = []
+                    let ne = bounds.getNorthEast(), sw = bounds.getSouthWest()
+                    latRange = [sw.getLat(), ne.getLat()]
+                    lngRange = [sw.getLng(),ne.getLng()]
+                    rctx.mapBounds = [lngRange, latRange]
+
                     this.layers.forEach(layer => {
                         if (layer.visible) {
                             layer.render(rctx)
                         }
                     })
-                    
+                        
+                   
                 }
                 ['click','dblclick', 'mousemove'].forEach((etype:EventType) => {
                     canvas.addEventListener(etype, (event: MouseEvent) => {
@@ -235,10 +217,14 @@ export class MapView{
     setCenter(center: LngLat) {
         this.map.setCenter(center)
     }
-    // 先注释掉，因为会出现插件没有加载完毕时调用报错
-    // addControl(name: string, config?: any) {
-    //     this.map.addControl(new AMap[name](config))
-    // }
+    // 
+    addControl(name: string, config?: any) {
+        try{
+            this.map.addControl(new AMap[name](config))
+        }catch(e){
+
+        }
+    }
     addMarker(config: any = {}) {
         let marker = new AMap.Marker({
             map: this.map,

@@ -6,7 +6,7 @@ import { CanvasMark } from './Shapes/CanvasMark';
 import { CanvasPolygon } from './Shapes/CanvasPolygon';
 
 import { Layer } from './Layers/Layer'
-import { CircleLayer, LineLayer, MarkLayer, PolygonLayer } from './Layers';
+import { CircleLayer, LineLayer, MarkLayer, PolygonLayer, H3Layer } from './Layers';
 import { colorUtils } from './Utils/color';
 
 
@@ -23,6 +23,7 @@ export {
     LineLayer,
     MarkLayer,
     PolygonLayer,
+    H3Layer,
     
     colorUtils
 }

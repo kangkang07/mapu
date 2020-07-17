@@ -5,27 +5,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://webapi.amap.com/maps?v=1.4.1&key=776b6523308e1f587b85d5d00964f893"></script>
-    <script src="dist/index.js">
-    </script>
+    <script src="https://unpkg.com/h3-js"></script>
+    <script src="dist/index.js"></script>
+    <script src="https://shadow.elemecdn.com/npm/axios@0.20.0-0/dist/axios.min.js"></script>
 </head>
 <style>
     body{
         margin: 0;
     }
+    .header{
+        height: 30px;
+    }
     #map{
-        height: 100vh;
+        height: calc(100vh - 30px);
         width:100vw;
     }
 </style>
 <body>
+    <div class="header">
+        <button onclick="draw()">sdfasdf</button>
+    </div>
     <div id="map"></div>
 </body>
 </html>
 <script>
+
+    
+
+    var data
+    // AMap.plugin('AMap.DistrictSearch', function () {
+    //     var districtSearch = new AMap.DistrictSearch({
+    //         // 关键字对应的行政区级别，country表示国家
+    //         level: 'city',
+    //         //  显示下级行政区级数，1表示返回下一级行政区
+    //         subdistrict: 1,
+    //         extensions:'all'
+    //     })
+        
+    //     // 搜索所有省/直辖市信息
+    //     districtSearch.search('上海市', function(status, result) {
+    //         // 查询成功时，result即为对应的行政区信息
+    //         console.log(result)
+    //         let polygons = []
+    //         result.districtList[0].boundaries.forEach(poly => {
+    //             let cells = h3.polyfill(poly.map(p => [p.lat, p.lng]),8)
+    //             // let cellPolys = h3.h3SetToMultiPolygon(cells)
+    //             cells.forEach(cellIndex => {
+    //                 // let polygon = h3.h3ToGeoBoundary(cell)
+    //                 // polygon = polygon.map(p=>[p[1],p[0]])
+    //                 polygons.push(cellIndex)
+                    
+    //             })
+    //             // console.log(cellPolys[0][0][0])
+    //             // let polygon = cellPolys[0][0]
+
+                
+    //         })
+    //         console.log(polygons)
+    //         data = polygons
+    //     })
+    // })
+    function Max(arr,props){
+        let maxValues = props.map(prop=>{
+            return {
+                prop,
+                value:0
+            }
+        })
+        for(let i=0;i<arr.length;i++){
+            let row = arr[i]
+            maxValues.forEach(propv=>{
+                if(row[propv.prop]>propv.value){
+                    propv.value = row[propv.prop]
+                }
+            })
+        }
+        return maxValues
+    }
+    Promise.all([
+        axios.get('https://dataservice-api.dw.alibaba-inc.com/project/23385/temp_xw_eleme_visit_h3_8?appCode=22BF8C0CC20548769CBB61170C5486ED&city_name=上海&pageNum=1&pageSize=2000'),
+        axios.get('https://dataservice-api.dw.alibaba-inc.com/project/23385/temp_xw_eleme_visit_h3_8?appCode=22BF8C0CC20548769CBB61170C5486ED&city_name=上海&pageNum=2&pageSize=2000'),
+    ]).then(reses=>{
+        let res = []
+        console.log(reses)
+        reses.forEach(data=>{
+            res.push(...data.data.data.rows)
+        })
+        let maxes = Max(res,['uv','order_uv','rate','gmv'])
+
+        console.log(maxes)
+        data = res
+    })
+  
     let mapView = new MapView()
     console.log(mapView)
-    mapView.initMap(document.getElementById('map'),{
+    mapView.init(document.getElementById('map'),{
         mapStyle: 'amap://styles/whitesmoke',
     })
+    mapView.map.setCity('上海')
+    function draw(){
+        let polygons = new H3Layer(mapView)
+        console.time('mapu')
+
+        polygons.data(data.map(cell => {
+            return {
+                index: cell.h3_bigint8,
+                style: {
+                    // fillColor: currentHive===hive ? hive.borderColor: 'transparent',
+                    fillColor: 'rgba(190,210,255,0.5)',
+                    strokeColor: 'transparent', // hive.borderColor,
+                    strokeWeight: 0// currentHive===hive ? 4: 1
+                }
+            }
+        }))
+        console.timeEnd('mapu')
+    }
+    // function draw(){
+    //     let polygons = new H3Layer(mapView)
+    //     console.time('mapu')
+
+    //     polygons.data(data.map(i => {
+    //         return {
+    //             index: i,
+    //             style: {
+    //                 // fillColor: currentHive===hive ? hive.borderColor: 'transparent',
+    //                 fillColor: 'rgba(210,245,255,0.7)',
+    //                 strokeColor: '#CC66CC', // hive.borderColor,
+    //                 strokeWeight: 1// currentHive===hive ? 4: 1
+    //             }
+    //         }
+    //     }))
+    //     console.timeEnd('mapu')
+    // }
 
 </script>

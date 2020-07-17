@@ -10,7 +10,7 @@ export default class MarkLayer extends Layer {
         super(mapView)
         this.shapeType = 'mark'
     }
-    CustomRender({ ctx, retina, event }: IRenderContext, eventProcess: (shape: CanvasShape) => any) {
+    CustomRender({ ctx, retina, event }: IRenderContext) {
         this.shapesMap.forEach((shape) => {
             let style = shape.style
 
@@ -31,16 +31,13 @@ export default class MarkLayer extends Layer {
             }
             ctx.arc(center.getX(), center.getY(), r, 0, 2 * Math.PI)
             ctx.closePath()
-            if (event) {
-                eventProcess(shape)
-            }
             ctx.stroke()
             ctx.fill()
         })
     }
     protected parseData(data:IDataParams): CanvasMark {
-        let {config, style} = data
-        let shape = new CanvasMark(config, style)
+        let {loc, style} = data
+        let shape = new CanvasMark(loc, style)
         shape.setLayer(this)
         return shape
     }

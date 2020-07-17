@@ -8,12 +8,16 @@ export interface IRenderContext{
     ctx?: CanvasRenderingContext2D
     event?: MapEvent
     retina?: boolean
+    mapBounds?: [any,any]
 }
 
 export interface IDataParams {
-    config: any
+    path?: any
+    radius?:  number
+    loc?: any
     style: IShapeStyle
-    extra?:any
+    extra?: any
+    [other:string]:any
 }
 
 export abstract class Layer {
@@ -99,7 +103,7 @@ export abstract class Layer {
     protected abstract parseData(data: IDataParams): CanvasShape
     
     // 具体的render逻辑由子类实现
-    protected abstract CustomRender(rctx: IRenderContext,  eventProcess:(shape:CanvasShape)=>any): void
+    protected abstract CustomRender(rctx: IRenderContext): void
 
     
     addShape(shape: CanvasShape, name?:string) {
@@ -126,65 +130,24 @@ export abstract class Layer {
 
     }
 
+    lnglatToContainer(lnglat: LngLat, bounds:[any,any], container:any) {
+        let [lngRange, latRange] = bounds
+        // if (lnglat[0] < lngRange[0] || lnglat[0] > lngRange[1] || lnglat[1] < latRange[0] || lnglat[1] > latRange[1]) {
+        //     return null
+        // }
+        let lngRatio = (lnglat[0] - lngRange[0]) / (lngRange[1] - lngRange[0])
+        let latRatio = (lnglat[1] - latRange[0]) / (latRange[1] - latRange[0])
+        let x = Math.round(lngRatio * container.width)
+        let y = Math.round((1 - latRatio) * container.height)
+        return { x, y }
+    
+    }
+
     render(rctx?: IRenderContext ) {
         let shapeHandler:IMapEventListener = null
         let layerHandler: IMapEventListener = null
         let mapHandler: IMapEventListener = null
-        const eventProcess = (shape: CanvasShape) => { }
-
-        // const eventProcess =  (shape:CanvasShape) => {
-        //     let {
-        //         ctx,event,retina
-        //     } = rctx
-        //     let eventName = event.type
-        //     let eventSource:any
-        //     for (let el of this.view.eventListenerList) {
-        //         if (el.level === 'map') {
-        //             mapHandler = el
-        //         }
-        //         if (el.level === 'shape' && el.nanoid === shape.nanoid && el.type === event.type) {
-        //             shapeHandler = el
-        //         }
-        //         if (el.level === 'layer' && el.nanoid === this.nanoid && el.type === event.type) {
-        //             layerHandler = el
-        //         }
-        //     }
-        //     if (shapeHandler || layerHandler || mapHandler) {
-        //         let x = event.offsetX
-        //         let y = event.offsetY
-        //         if (retina) {
-        //             // x *= 2
-        //             // y *= 2
-        //         }
-                
-        //         if (ctx.isPointInPath(x, y) || ctx.isPointInStroke(x, y)) {
-        //             if (shapeHandler) {
-        //                 let handler = shapeHandler.handler
-        //                 setTimeout(() => {
-        //                     handler(event)
-        //                 }, 0);
-        //                 shapeHandler = null
-        //             }
-        //             if (layerHandler) {
-        //                 let handler = layerHandler.handler
-
-        //                 setTimeout(() => {
-        //                     handler(event)
-        //                 }, 0);
-        //                 layerHandler = null
-        //             }
-        //             if (mapHandler) {
-        //                 event.sourceObjects.push(shape)
-        //                 event.sourceObjects.push(this)
-        //             }
-        //         } 
-        //     }
-        //     // if (eventName === 'mousemove') {
-        //     //     shape.mouseOver = shapeEventHit
-        //     // }
-        // }
-        this.CustomRender(rctx,eventProcess)
-        // this.mouseOver = layerEventHit
+        this.CustomRender(rctx)
     }
    
     data(data: IDataParams[]) {

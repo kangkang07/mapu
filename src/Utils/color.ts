@@ -19,17 +19,18 @@ export const toRGBA = (val: string, alpha = 1) => {
     }
 }
 
-export const generateColor = (num: number = 1, alpha: number = 1): string | string[] => {
+export const generateColor = (alpha: number = 1): string => {
     const hue = 199
-    if(num <= 1)
-        return `rgba(${Math.round(Math.random() * hue)},${Math.round(Math.random() * hue)},${Math.round(Math.random() * hue)}, ${alpha})`
-    else {
-        let arr = []
-        for (let i = 1; i < num; i++){
-            arr.push(generateColor() as string)
-        }
-        return arr
+    return `rgba(${Math.round(Math.random() * hue)},${Math.round(Math.random() * hue)},${Math.round(Math.random() * hue)}, ${alpha})`
+}
+
+export const generateColors = (num: number = 1, alpha: number = 1): string | string[] => {
+
+    let arr = []
+    for (let i = 1; i < num; i++){
+        arr.push(generateColor() as string)
     }
+    return arr
 }
 
 

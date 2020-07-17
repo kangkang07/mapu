@@ -10,7 +10,7 @@ export default class LineLayer extends Layer {
         super(mapView)
         this.shapeType = 'line'
     }
-    CustomRender({ ctx, retina, event }:IRenderContext, eventProcess:(shape:CanvasShape)=>any) {
+    CustomRender({ ctx, retina, event }:IRenderContext) {
         this.shapesMap.forEach((shape) => {
             let style = shape.style
 
@@ -34,16 +34,13 @@ export default class LineLayer extends Layer {
                 shape.containerPath.push([pos.getX(),pos.getY()])
                 ctx.lineTo(pos.getX(),pos.getY())
             }
-            if (event) {
-                eventProcess(shape)
-            }
             ctx.stroke()
         })
     }
     protected parseData(data: IDataParams): CanvasLine {
     
-        let {config, style} = data
-        let shape = new CanvasLine(config, style)
+        let {path, style} = data
+        let shape = new CanvasLine(path, style)
         shape.setLayer(this)
         return shape
     }

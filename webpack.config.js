@@ -10,7 +10,8 @@ module.exports = {
 		libraryTarget: "umd",
     },
     externals: {
-        path:'path'
+		path: 'path',
+		
 	},
 	
 	resolve: { // 路径别名
