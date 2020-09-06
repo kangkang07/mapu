@@ -74,14 +74,7 @@ export class MapView{
         
         return new Promise((resolve, reject) => {
             this.readyPromise = {resolve,reject}
-            this.map.plugin(plugins,()=>{ 
-                this.mouseTool = new AMap.MouseTool(this.map); 
-                this.mouseTool.on('draw', ({ type, obj }:any) => {
-                    let shape = this.addPolygonFromMapPolygon(obj)
-                    this.map.remove(obj)
-                    this.onDrawClose && this.onDrawClose(shape)
-                    this.mouseTool.close()
-                })
+            this.map.plugin(plugins, () => {
 
                 let canvas = document.createElement('canvas')
 
@@ -119,7 +112,7 @@ export class MapView{
                     lngRange = [sw.getLng(),ne.getLng()]
                     rctx.mapBounds = [lngRange, latRange]
 
-                    this.layers.forEach(layer => {
+                    this.layers.sort((l1,l2)=>l1.zIndex - l2.zIndex).forEach(layer => {
                         if (layer.visible) {
                             layer.render(rctx)
                         }
@@ -130,7 +123,7 @@ export class MapView{
                 ['click','dblclick', 'mousemove'].forEach((etype:EventType) => {
                     canvas.addEventListener(etype, (event: MouseEvent) => {
                         let dur = Date.now() - this.mouseDownTime
-                        if (etype === 'click' && dur > 500) {
+                        if (etype === 'click' && dur > 200) {
                             return
                         }
                         // 鼠标按下时不响应事件
@@ -151,7 +144,7 @@ export class MapView{
                         //     mapListener = listener
                         // }
                             
-                        for (let layer of this.layers) {
+                        for (let layer of this.layers.sort((l1,l2)=>l2.zIndex - l1.zIndex)) {
                             let foundShape = null
                             for (let shape of layer.shapes) {
                                 if (shape.contain && shape.contain(event.offsetX, event.offsetY)) {
@@ -188,8 +181,8 @@ export class MapView{
 
                 this.customCanvasLayer = layer
 
-                resolve()
                 this.ready = 1
+                resolve()
             });
         })
     }

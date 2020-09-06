@@ -15,7 +15,7 @@ export default class MarkLayer extends Layer {
             let style = shape.style
 
             ctx.fillStyle = style.strokeColor
-            ctx.strokeStyle = style.strokeColor
+            ctx.strokeStyle = 'transparent'// style.strokeColor
             ctx.lineWidth = style.strokeWeight
             if (retina) {
                 // ctx.lineWidth *= 2

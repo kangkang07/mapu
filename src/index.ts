@@ -8,9 +8,11 @@ import { CanvasPolygon } from './Shapes/CanvasPolygon';
 import { Layer } from './Layers/Layer'
 import { CircleLayer, LineLayer, MarkLayer, PolygonLayer, H3Layer } from './Layers';
 import { colorUtils } from './Utils/color';
+import { MapEvent } from './Models';
 
 
 export {
+    MapEvent,
     MapView,
     CanvasShape,
     CanvasCircle,
@@ -25,7 +27,11 @@ export {
     PolygonLayer,
     H3Layer,
     
-    colorUtils
+    colorUtils,
+
+    
+
+    
 }
 
 export default mapView

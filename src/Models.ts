@@ -1,6 +1,6 @@
-import { CanvasShape } from '@/Shapes/Shape';
-import { Layer } from '@/Layers/Layer';
-import { MapView } from '@/MapView';
+import { CanvasShape } from './Shapes/Shape';
+import { Layer } from './Layers/Layer';
+import { MapView } from './MapView';
 
 
 export interface IShapeStyle {

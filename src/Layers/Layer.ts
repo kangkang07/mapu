@@ -2,6 +2,7 @@ import { MapView } from "../MapView";
 import { ShapeType, RenderContext, LngLat, IShapeStyle, IMapEventListener, EventType, MapEvent } from "../Models";
 import { CanvasShape } from '../Shapes/Shape';
 import NanoId from 'nanoid'
+import { prototype } from 'module';
 
 
 export interface IRenderContext{
@@ -15,7 +16,7 @@ export interface IDataParams {
     path?: any
     radius?:  number
     loc?: any
-    style: IShapeStyle
+    style?: IShapeStyle
     extra?: any
     [other:string]:any
 }
@@ -34,7 +35,7 @@ export abstract class Layer {
         fillColor: 'transparent',
         strokeColor: 'blue'
     }
-
+    zIndex:number = 0
 
     private _visible: boolean = true
     
@@ -105,7 +106,9 @@ export abstract class Layer {
     // 具体的render逻辑由子类实现
     protected abstract CustomRender(rctx: IRenderContext): void
 
-    
+     containerCache: any
+     boundsCache:any
+
     addShape(shape: CanvasShape, name?:string) {
         this.shapes.push(shape)
         this.shapesMap.set(shape.nanoid, shape)
@@ -130,7 +133,12 @@ export abstract class Layer {
 
     }
 
-    lnglatToContainer(lnglat: LngLat, bounds:[any,any], container:any) {
+    lnglatToContainer(lnglat: LngLat, bounds: [any, any], container: any) {
+        this.boundsCache = bounds
+        this.containerCache = container
+
+
+
         let [lngRange, latRange] = bounds
         // if (lnglat[0] < lngRange[0] || lnglat[0] > lngRange[1] || lnglat[1] < latRange[0] || lnglat[1] > latRange[1]) {
         //     return null
@@ -160,5 +168,13 @@ export abstract class Layer {
             this.shapes.push(shape)
         })
         this.view.render()
+    }
+
+    getArea() {
+        let area = 0
+        this.shapes.forEach(shape => {
+            area+= shape.getArea()
+        })
+        return area
     }
 }

@@ -20,6 +20,9 @@ export class CanvasPolygon extends CanvasShape  {
         this.style = Object.assign({}, this.style, style)
         // this.setStyle(style)
     }
+    getArea() {
+        return  AMap.GeometryUtil.ringArea(this.path)
+    }
     contain = function(x, y) {
         var w = 0;
         let points = this.containerPath

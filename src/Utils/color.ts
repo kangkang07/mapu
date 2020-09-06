@@ -33,6 +33,20 @@ export const generateColors = (num: number = 1, alpha: number = 1): string | str
     return arr
 }
 
+export const lighter = (color,deg:number) => {
+    let rgb = toRGBA(color)
+    let values = rgb.substring(rgb.indexOf('(') + 1, rgb.length - 1).split(',')
+    let lvalues = values.map(vstr => {
+        let v = Number(vstr)
+        v *= deg
+        if(v>255){
+            v=255
+        }
+        return v
+    })
+    return `rgba(${lvalues[0]},${lvalues[1]},${lvalues[2]},${values[3]})`
+}
+
 
 type CalcType = 'log10'|'log2'|'ln'|'logx'|'linear'
 export const calcColorLevel = (val: number, max: number, calcType: CalcType = 'linear', base: number = Math.E) => {
@@ -60,5 +74,6 @@ export const colorUtils = {
     generateColor,
     hex2rgb,
     rgb2hex,
-    toRGBA
+    toRGBA,
+    lighter
 }

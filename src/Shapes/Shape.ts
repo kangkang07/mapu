@@ -48,6 +48,10 @@ export class CanvasShape{
         this.eventListeners.delete(eventName)
         // this.view.off(eventName,'layer',this)
     }
+
+    getArea() {
+        return 0
+    }
  
 
     contain:(x:number, y:number)=>boolean = null
